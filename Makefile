@@ -27,6 +27,9 @@ TARGET_RPI ?= 0
 # Build for Emscripten/WebGL
 TARGET_WEB ?= 0
 
+# Build for SerenityOS
+TARGET_SERENITY ?= 1
+
 # Makeflag to enable OSX fixes
 OSX_BUILD ?= 0
 
@@ -227,6 +230,8 @@ COMPARE := 0
 
 ifeq ($(TARGET_WEB),1)
   VERSION_CFLAGS := $(VERSION_CFLAGS) -DTARGET_WEB -DUSE_GLES
+else ifeq ($(TARGET_SERENITY),1)
+  VERSION_CFLAGS := $(VERSION_CFLAGS) -DTARGET_SERENITY
 endif
 
 # Check backends
@@ -529,6 +534,8 @@ else ifeq ($(findstring SDL,$(WINDOW_API)),SDL)
     BACKEND_LDFLAGS += -lGLESv2
   else ifeq ($(OSX_BUILD),1)
     BACKEND_LDFLAGS += -framework OpenGL $(shell pkg-config --libs glew)
+  else ifeq ($(TARGET_SERENITY),1)
+    BACKEND_LDFLAGS += -lgl
   else
     BACKEND_LDFLAGS += -lGL
   endif
